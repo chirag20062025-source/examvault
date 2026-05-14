@@ -1,0 +1,35 @@
+# ============================================================
+#  ExamVault — Apache .htaccess
+#  Place this in your project root (next to index.html)
+# ============================================================
+
+Options -Indexes
+
+# ----- Security headers -----
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set X-XSS-Protection "1; mode=block"
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+# ----- Block direct access to config.php -----
+<Files "config.php">
+    Order allow,deny
+    Deny from all
+</Files>
+
+# ----- Allow CORS for API files -----
+<FilesMatch "\.(php)$">
+    <IfModule mod_headers.c>
+        Header set Access-Control-Allow-Origin "*"
+        Header set Access-Control-Allow-Methods "GET, POST, OPTIONS"
+        Header set Access-Control-Allow-Headers "Content-Type"
+    </IfModule>
+</FilesMatch>
+
+# ----- PHP session settings (optional override) -----
+<IfModule mod_php.c>
+    php_value session.cookie_httponly 1
+    php_value session.use_strict_mode 1
+</IfModule>
